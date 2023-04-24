@@ -1,0 +1,30 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JsonDiffer.Controls"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="JsonDiffer.Controls.DiffControl"
+             mc:Ignorable="d" d:DesignWidth="800" Background="#FFFD0808">
+    <Grid Background="White" VerticalAlignment="Center" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=JsonDiff}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="11*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="13*"/>
+                <ColumnDefinition Width="67*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="PathTextBlock" Text="{Binding Path=Path}" TextWrapping="Wrap" FontFamily="Sansation" TextAlignment="Left" Margin="0,5,10,0" Background="WhiteSmoke" Padding="2,0,2,0" Grid.Column="1"/>
+            <TextBlock Grid.Column="0" Name="TypeTextBlock" Text="{Binding Path=Modification}" TextWrapping="Wrap" FontFamily="Sansation" TextAlignment="Center" Margin="10,5,5,0" Background="#FFFDFFDA" Padding="0,0,0,0"/>
+
+        </Grid>
+
+        <StackPanel Grid.Row="1" Margin="0,5,0,5">
+            <syncfusion:EditControl x:Name="OriginalText" BorderThickness="1" DocumentLanguage="Custom" Text="{Binding AExpand, FallbackValue=-.-}" IsReadOnly="True" ShowDefaultContextMenu="False" TabSpaces="1" IsUndoEnabled="False" IsTrackChangesEnabled="False" IsRedoEnabled="False" EnableOutlining="False" Background="#FFD4FFF4" Margin="10,0,10,0"/>
+            <syncfusion:EditControl x:Name="ModifiedText" BorderThickness="1" DocumentLanguage="Custom" Text="{Binding BExpand, FallbackValue=-.-}" VerticalAlignment="Top" IsReadOnly="True" ShowDefaultContextMenu="False" TabSpaces="1" IsUndoEnabled="False" IsTrackChangesEnabled="False" IsRedoEnabled="False" EnableOutlining="False" Margin="10,2,10,0" Background="#FFE2E6FF" Padding="0,2,0,0"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

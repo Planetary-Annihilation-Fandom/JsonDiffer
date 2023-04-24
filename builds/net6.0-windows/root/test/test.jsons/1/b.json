@@ -1,0 +1,29 @@
+{
+  "ammo_capacity": 3.6,
+  "ammo_demand": 1.2,
+  "ammo_id": "/pa/units/land/l_bot_aa/l_bot_ttt_ammo.json",
+  "ammo_per_shot": 1.2,
+  "ammo_source": "energy",
+  "auto_attack": false,
+  "base_spec": "/pa/tools/base_missile_turret/base_missile_turret.json",
+  "carpet_fire": true,
+  "carpet_wait_for_full_ammo": true,
+  "charge_ammo_when_targeting": false,
+  "idle_aim_delay": 3,
+  "max_range": 344,
+  "pitch_range": 85,
+  "pitch_rate": 720,
+  "rate_of_fire": 5,
+  "spread_fire": true,
+  "target_layers": [
+    "WL_Land"
+  ],
+  "target_priorities": [
+    "Air & Mobile",
+    "Air & (EnergyProduction | Transport | Bomber | Gunship | Titan)",
+    
+    "Land"
+  ],
+  "yaw_range": 180,
+  "yaw_rate": 720
+}

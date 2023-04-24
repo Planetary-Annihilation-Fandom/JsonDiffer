@@ -1,0 +1,164 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JsonDiffer"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:controls="clr-namespace:JsonDiffer.Controls"
+        xmlns:files="clr-namespace:JsonDiffer.Code.Files"
+        xmlns:code="clr-namespace:JsonDiffer.Code"
+        xmlns:json="clr-namespace:JsonDiffer.Code.Json"
+        x:Class="JsonDiffer.MainWindow"
+        mc:Ignorable="d"
+        Title="JsonDiffer" Height="450" Width="800" Name="Main">
+
+    <Grid DataContext="{Binding ElementName=Main}" >
+        <syncfusion:TabControlExt HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CloseButtonType="Hide" ShowTabItemContextMenu="False" ShowTabListContextMenu="False">
+            <syncfusion:TabItemExt Header="Setup">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="135*"/>
+                        <RowDefinition Height="39*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="178*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="199*"/>
+                            <ColumnDefinition Width="194*"/>
+                        </Grid.ColumnDefinitions>
+                        <syncfusion:SfTextBoxExt x:Name="OriginalFolderText" Text="{Binding Setup.Original.Path, Mode=OneWay}" HorizontalAlignment="Center" Height="41" TextWrapping="Wrap" VerticalAlignment="Top" Watermark="Select Original folder" Width="378" Margin="0,14,0,0"/>
+                        <syncfusion:SfTextBoxExt x:Name="ModifiedFolderText" Text="{Binding Setup.Modified.Path, Mode=OneWay}" HorizontalAlignment="Center" Height="41" TextWrapping="Wrap" VerticalAlignment="Top" Watermark="Select Modified folder" Width="368" Margin="0,14,0,0" Grid.Column="1"/>
+                        <syncfusion:ButtonAdv Grid.Column="0" HorizontalAlignment="Center" Height="35" Label="Select Original" Margin="0,74,0,0" VerticalAlignment="Top" Width="120" IconWidth="0" IconHeight="0" Click="SelectOriginalFolderClick">
+                            <Button Content="Button"/>
+                        </syncfusion:ButtonAdv>
+                        <syncfusion:ButtonAdv Content="Select Modified" HorizontalAlignment="Center" Height="35" Label="Select Modified" Margin="0,74,0,0" VerticalAlignment="Top" Width="120" IconWidth="0" IconHeight="0" Grid.Column="1" Click="SelectModifiedFolderClick"/>
+                    </Grid>
+                    <syncfusion:SfLinearProgressBar x:Name="SetupProgressBar" HorizontalAlignment="Center" Progress="70" Grid.Row="2" Width="766" Margin="0,10,0,10"/>
+                    <syncfusion:SfTextBoxExt x:Name="SetupStatusText" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="Progress" Watermark="Enter a Value" Width="766" Margin="0,11,0,10" IgnoreCase="True" SuggestionMode="None" IsReadOnly="True" TextAlignment="Center"/>
+                    <syncfusion:ButtonAdv x:Name="StartAnalyzeButton" Content="START LAUNCH" HorizontalAlignment="Center" Height="35" Label="START ANALYZE" Margin="0,54,0,0" Grid.Row="3" VerticalAlignment="Top" Width="130" IconWidth="0" IconHeight="0" Click="StartAnalyzeClick"/>
+
+                </Grid>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Result">
+                <Grid>
+
+                    <syncfusion:TabControlExt HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TabStripPlacement="Left" CloseButtonType="Hide" ShowTabItemContextMenu="False" ShowTabListContextMenu="False" TabScrollButtonVisibility="Hidden">
+                        <syncfusion:TabItemExt Header="Modified">
+                            <Grid DataContext="{Binding Path=Comparator.ModifyFilesGroup, ElementName=Main}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="227*"/>
+                                    <ColumnDefinition Width="521*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <syncfusion:SfTreeView x:Name="ModifiedFilesTree"
+                                    Grid.Column="0" ChildPropertyName="Nodes" ItemsSource="{Binding Nodes}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ShowLines="True" AutoExpandMode="AllNodes" ExpanderWidth="5" Indentation="5" ItemHeight="15" Margin="0,0,5,0" SelectionChanged="SelectedModifiedChanged">
+                                    <syncfusion:SfTreeView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid><TextBlock Text="{Binding Name}" Foreground="Black" FontSize="11" VerticalAlignment="Center" FontFamily="Sansation" /></Grid>
+                                        </DataTemplate>
+                                    </syncfusion:SfTreeView.ItemTemplate>
+                                </syncfusion:SfTreeView>
+
+                                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding Path=SelectedItem.FileComparator.Differences, ElementName=ModifiedFilesTree}" Name="ModifiedView" Grid.Column="1">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel CanVerticallyScroll="True" Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type json:JsonNodeDiff}">
+                                            <Grid Margin="0,10,0,0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="5*"/>
+                                                </Grid.RowDefinitions>
+                                                <controls:DiffControl  Grid.Row="0"  JsonDiff="{Binding}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                    </ScrollViewer>
+                            </Grid>
+                        </syncfusion:TabItemExt>
+
+
+
+                        <syncfusion:TabItemExt Header="New">
+                            <Grid DataContext="{Binding Path=Comparator.NewFilesGroup, ElementName=Main}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="227*"/>
+                                    <ColumnDefinition Width="521*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <syncfusion:SfTreeView x:Name="NewFilesTree"
+                                                       Grid.Column="0" ChildPropertyName="Nodes" ItemsSource="{Binding Nodes}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ShowLines="True" AutoExpandMode="AllNodes" ExpanderWidth="5" Indentation="5" ItemHeight="15" Margin="0,0,5,0" SelectionChanged="SelectedModifiedChanged">
+                                    <syncfusion:SfTreeView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid><TextBlock Text="{Binding Name}" Foreground="Black" FontSize="11" VerticalAlignment="Center" FontFamily="Sansation" /></Grid>
+                                        </DataTemplate>
+                                    </syncfusion:SfTreeView.ItemTemplate>
+                                </syncfusion:SfTreeView>
+                            </Grid>
+                        </syncfusion:TabItemExt>
+                        <syncfusion:TabItemExt Header="Delete">
+                            <Grid DataContext="{Binding Path=Comparator.DeleteFilesGroup, ElementName=Main}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="227*"/>
+                                    <ColumnDefinition Width="521*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <syncfusion:SfTreeView x:Name="DeleteFilesTree"
+                                                       Grid.Column="0" ChildPropertyName="Nodes" ItemsSource="{Binding Nodes}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ShowLines="True" AutoExpandMode="AllNodes" ExpanderWidth="5" Indentation="5" ItemHeight="15" Margin="0,0,5,0" SelectionChanged="SelectedModifiedChanged">
+                                    <syncfusion:SfTreeView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid><TextBlock Text="{Binding Name}" Foreground="Black" FontSize="11" VerticalAlignment="Center" FontFamily="Sansation" /></Grid>
+                                        </DataTemplate>
+                                    </syncfusion:SfTreeView.ItemTemplate>
+                                </syncfusion:SfTreeView>
+                            </Grid>
+                        </syncfusion:TabItemExt>
+                        <syncfusion:TabItemExt Header="Equal">
+                            <Grid DataContext="{Binding Path=Comparator.EqualFilesGroup, ElementName=Main}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="227*"/>
+                                    <ColumnDefinition Width="521*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <syncfusion:SfTreeView x:Name="EqualFilesTree"
+                                                       Grid.Column="0" ChildPropertyName="Nodes" ItemsSource="{Binding Nodes}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ShowLines="True" AutoExpandMode="AllNodes" ExpanderWidth="5" Indentation="5" ItemHeight="15" Margin="0,0,5,0" SelectionChanged="SelectedModifiedChanged">
+                                    <syncfusion:SfTreeView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid><TextBlock Text="{Binding Name}" Foreground="Black" FontSize="11" VerticalAlignment="Center" FontFamily="Sansation" /></Grid>
+                                        </DataTemplate>
+                                    </syncfusion:SfTreeView.ItemTemplate>
+                                </syncfusion:SfTreeView>
+                            </Grid>
+                        </syncfusion:TabItemExt>
+                        <syncfusion:TabItemExt Header="Error">
+                            <Grid DataContext="{Binding Path=Comparator.JsonCorruptFilesGroup, ElementName=Main}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="227*"/>
+                                    <ColumnDefinition Width="521*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <syncfusion:SfTreeView x:Name="ErrorFilesTree"
+                                                       Grid.Column="0" ChildPropertyName="Nodes" ItemsSource="{Binding Nodes}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ShowLines="True" AutoExpandMode="AllNodes" ExpanderWidth="5" Indentation="5" ItemHeight="15" Margin="0,0,5,0" SelectionChanged="SelectedModifiedChanged">
+                                    <syncfusion:SfTreeView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid><TextBlock Text="{Binding Name}" Foreground="Black" FontSize="11" VerticalAlignment="Center" FontFamily="Sansation" /></Grid>
+                                        </DataTemplate>
+                                    </syncfusion:SfTreeView.ItemTemplate>
+                                </syncfusion:SfTreeView>
+                            </Grid>
+                        </syncfusion:TabItemExt>
+                    </syncfusion:TabControlExt>
+
+                </Grid>
+            </syncfusion:TabItemExt>
+        </syncfusion:TabControlExt>
+
+    </Grid>
+</Window>
