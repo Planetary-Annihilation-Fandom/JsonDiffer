@@ -47,6 +47,9 @@ namespace JsonDiffer.Code.Json
                 var aProperties = GetProperties(ao);
                 var bProperties = GetProperties(bo);
 
+                if (aProperties is null || bProperties is null)
+                    return Differences;
+
                 var pairs = new List<JsonNodePair>(aProperties.Count > bProperties.Count
                     ? aProperties.Count : bProperties.Count);
 
@@ -152,15 +155,22 @@ namespace JsonDiffer.Code.Json
             return Differences;
         }
 
-        public LinkedList<KeyValuePair<string, JsonNode?>> GetProperties(JsonObject jsonObject)
+        public LinkedList<KeyValuePair<string, JsonNode?>>? GetProperties(JsonObject jsonObject)
         {
-            var list = new LinkedList<KeyValuePair<string, JsonNode?>>();
-            foreach (var keyValuePair in jsonObject)
+            try
             {
-                list.AddLast(keyValuePair);
-            }
+                var list = new LinkedList<KeyValuePair<string, JsonNode?>>();
+                foreach (var keyValuePair in jsonObject)
+                {
+                    list.AddLast(keyValuePair);
+                }
 
-            return list;
+                return list;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public List<JsonNode?> GetElements(JsonArray jsonArray)
